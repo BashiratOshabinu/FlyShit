@@ -30,7 +30,6 @@ import { Cart } from '../../Screens/Cart';
 import { Wishlist } from '../../Screens/Wishlist';
 import { Checkout } from '../../Screens/Checkout';
 import { Payscreen } from '../../Screens/Payscreen';
-import { Orders } from '../../Screens/Orders';
 
 
 const Stack = createNativeStackNavigator();
@@ -69,7 +68,6 @@ export function StackNavigator () {
         <Stack.Screen name="Wishlist" component={ Wishlist } />
         <Stack.Screen name="Checkout" component={ Checkout } />
         <Stack.Screen name="Payscreen" component={ Payscreen } />
-        <Stack.Screen name="Orders" component={ Orders } />
 
 
 
