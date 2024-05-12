@@ -14,12 +14,6 @@ export function Profile({ navigation }) { // Add navigation prop here
           <Text style={{fontSize:40, fontFamily: "Creepster_400Regular",color:"white"}}>User</Text>
         </View>
         <View style={{justifyContent:"space-between",flex:1 }}>
-          <TouchableOpacity onPress={() => navigation.navigate("Orders")} 
-          style={{ flexDirection: "row",alignItems:"center"}}>
-            <Ionicons name='list-outline' size={25} style={{ color:"white", paddingRight: 20}}/>
-            <Text style={{fontSize:25,color:"white"}}>Orders</Text>
-          </TouchableOpacity>
-          
           <TouchableOpacity onPress={() => navigation.navigate("Wishlist")} style={{ flexDirection: "row",alignItems:"center"}}>
             <Ionicons name='heart' size={25} style={{ color:"white", paddingRight: 20}}/>
             <Text style={{fontSize:25,color:"white"}}>Wishlist</Text>
