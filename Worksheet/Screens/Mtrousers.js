@@ -5,23 +5,23 @@ import { collection, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../Firebase/settings";
 import { useNavigation } from "@react-navigation/native";
 
-export function Shoes(
+export function Mtrousers(
   ) {
   const navigation = useNavigation()
-  const { setAllCategory, allCategory, shoes, setShoes } = useContext(AppContext);
-  const [shoesID,setShoesID] = useState("")
+  const { setAllCategory, allCategory, mtrouser, setMtrouser } = useContext(AppContext);
+  const [mtrouserID,setMtrouserID] = useState("")
 
   const [outfits, setFilteredOutfits] = useState([]);
 
   useEffect(() => {
     const q = collection(db, "outfits");
-    const filter = query(q, where("category", "==", "shoes"));
+    const filter = query(q, where("category", "==", "mtrouser"));
     onSnapshot(filter, (snapshot) => {
       const allData = [];
       snapshot.forEach((item) => {
         allData.push({
           ...item.data(),
-          shoesID: item.id
+          mtrouserID: item.id
         });
       });
 
@@ -47,7 +47,7 @@ export function Shoes(
 
 
               })
-              setShoesID(item.shoesID)}}>
+              setMtrouserID(item.mtrouserID)}}>
                 <View style={styles.imageContainer}>
                   <Image source={{ uri: item.image1 }} style={styles.image} />
                 </View>
@@ -58,9 +58,9 @@ export function Shoes(
               </TouchableOpacity>
             );
           }}
-          keyExtractor={(item) => item.shoesID}
-          horizontal={false} // Set to true if you want a horizontal scroll
-          numColumns={2} // Display two items in a row
+          keyExtractor={(item) => item.MTrouserID}
+          horizontal={false} 
+          numColumns={2} 
         />
       </View>
     </SafeAreaView>
@@ -83,6 +83,6 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 350 // Adjust the height as needed
+    height: 350
   }
 });

@@ -1,88 +1,101 @@
-import { View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity,Image, TextInput, Dimensions, ImageBackground, } from "react-native";
-import { useEffect, useState, useCallback } from "react";
-import * as Font from 'expo-font';
-import { Caveat_400Regular, Caveat_500Medium } from '@expo-google-fonts/caveat';
-import { Creepster_400Regular } from '@expo-google-fonts/creepster';
-import { Whisper_400Regular } from '@expo-google-fonts/whisper';
+import { useContext } from 'react';
+import { View, Text, StatusBar, SafeAreaView, StyleSheet, ScrollView, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from 'react-native';
+import { AppContext } from '../Compnents/globalVariable';
+import { ErrorMessage, Formik } from 'formik';
+import * as yup from 'yup';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { authenthication } from '../Firebase/settings';
 
+const validation = yup.object({
+  email: yup.string()
+    .required()
+    .email("Enter a valid email")
+    .min(5)
+    .max(30),
+  password: yup.string().required().min(6).max(20)
+})
 
-export function Login({ navigation }) {
-  const [appIsReady, setAppIsReady] = useState(false);
+export function Login({ navigation, route }) {
+  const { email, setEmail, Preloader, setPreloader, setUserUID } = useContext(AppContext);
 
-  useEffect(() => {
-    async function prepare() {
-      try {
-        await Font.loadAsync({Creepster_400Regular });
-        await Font.loadAsync({ Caveat_500Medium });
-        await Font.loadAsync({ Whisper_400Regular });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({  });
-
-        
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-    prepare();
-  }, []);
-
-  useCallback(async () => {
-    if (appIsReady) {
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
   return (
-   
-    <ImageBackground source={{uri:"https://images.pexels.com/photos/11111767/pexels-photo-11111767.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load"}}
-    style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "black" }}>
+      <ScrollView>
+        <View style={styles.container}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={{ flex: 1 }}>
+              <Formik
+                initialValues={{ email: "", password: "" }}
+                onSubmit={(values, { setSubmitting }) => {
+                  setPreloader(true);
+                  signInWithEmailAndPassword(authenthication, values.email, values.password)
+                    .then(() => {
+                      onAuthStateChanged(authenthication, (user) => {
+                        setUserUID(user.uid);
+                        setPreloader(false);
+                        navigation.navigate("Dashboard");
+                      })
+                    })
+                    .catch((error) => {
+                      setSubmitting(false);
+                      setPreloader(false);
+                      Alert.alert(
+                        "Error",
+                        "Incorrect email or password.",
+                        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+                        { cancelable: true }
+                      );
+                      console.error("Login Error: ", error);
+                    });
+                }}
+                validationSchema={validation}
+              >
+                {(formikProps) => (
+                  <View>
+                    <Text style={{ color: 'white', fontSize: 50, fontFamily: "Creepster_400Regular", marginBottom: 20 }}>Welcome Back</Text>
+                    <View style={{ alignItems: "center", marginBottom: 100 }}>
+                      <TextInput
+                        placeholder='Email Address'
+                        style={{ padding: 10, borderRadius: 15, fontSize: 20, backgroundColor: 'gray', width: 350, marginBottom: 20, alignItems: 'center', borderColor: 'black', color: "white" }}
+                        placeholderTextColor={'white'}
+                        autoCapitalize='none'
+                        onChangeText={formikProps.handleChange("email")}
+                        onBlur={formikProps.handleBlur("email")}
+                        value={formikProps.values.email} />
+                      <Text style={{ color: "red", display: formikProps.errors.email ? "flex" : "none" }}>{formikProps.errors.email}</Text>
+                      <TextInput
+                        placeholder='Password'
+                        style={{ padding: 10, borderRadius: 15, fontSize: 20, backgroundColor: 'gray', width: 350, marginBottom: 20, alignItems: 'center', borderColor: 'black', color: "white" }}
+                        placeholderTextColor={'white'}
+                        secureTextEntry
+                        autoCapitalize='none'
+                        onChangeText={formikProps.handleChange("password")}
+                        onBlur={formikProps.handleBlur("password")}
+                        value={formikProps.values.password} />
+                      <Text style={{ color: "red", display: formikProps.touched.password && formikProps.errors.password ? "flex" : "none" }}>{formikProps.errors.password}</Text>
+                      <TouchableOpacity onPress={formikProps.handleSubmit} style={{ backgroundColor: 'white', borderRadius: 15, padding: 10, width: 200, alignItems: 'center' }} >
+                        <Text style={{ color: "black", fontSize: 30, fontFamily: "Creepster_400Regular" }}>Login</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={()=> navigation.navigate("ForgotPassword")}>
+                        <Text style={{ color: 'white', marginTop: 10 }}>Forgot Password ?</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </Formik>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
 
-          <SafeAreaView >
-          <View>
-          <Text style={{ color:'#CC9966', fontSize: 50, fontFamily:"Creepster_400Regular", marginBottom:20}}>Welcome Back</Text>
-          <View style={{ alignItems:"center", marginBottom: 100}}>
-          <TextInput
-                       placeholder='Email Address'
-                       style={{borderWidth: 1, padding: 10, borderRadius: 15, fontSize: 20, backgroundColor: 'rgba(255, 255, 255, 0)', width: 350, marginBottom:20, alignItems: 'center', borderColor:'white' }}
-                       placeholderTextColor={'white'}/>
-            <TextInput
-                       placeholder='Password'
-                       style={{borderWidth: 1, padding: 10, borderRadius: 15, fontSize: 20, backgroundColor: 'rgba(255, 255, 255, 0)', width: 350, marginBottom:20, alignItems: 'center', borderColor:'white'}}
-                       placeholderTextColor={'white'}/>
-            <TouchableOpacity style={{backgroundColor: '#CC9966',borderRadius: 15,padding: 10,borderWidth: 1, width: 200, alignItems: 'center'}}
-            onPress={() => navigation.navigate("Dashboard")} >   
-            <Text style={{ color:'white', fontSize: 30, fontFamily:"Creepster_400Regular"}}>Login</Text>
-            </TouchableOpacity>
-
-             <TouchableOpacity>          
-             <Text style={{ color:'white',borderWidth: 1,}}>Forgot Password ?</Text>
-             </TouchableOpacity>
-             </View>
-          </View>
-          </SafeAreaView>
-        
-            </ImageBackground>
-           
-  
-  )}
-  const styles = StyleSheet.create({
-    container:{
-      flex: 1,
-      marginTop: Platform.OS == "android" ? StatusBar.currentHeight: 0,
-      padding: 20,
-      justifyContent: "flex-end"
-    },
-    
-  })
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "flex-end",
+    backgroundColor: "black"
+  },
+});

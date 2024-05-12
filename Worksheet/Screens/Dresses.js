@@ -5,23 +5,23 @@ import { collection, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../Firebase/settings";
 import { useNavigation } from "@react-navigation/native";
 
-export function Shoes(
+export function Dresses(
   ) {
   const navigation = useNavigation()
-  const { setAllCategory, allCategory, shoes, setShoes } = useContext(AppContext);
-  const [shoesID,setShoesID] = useState("")
+  const { setAllCategory, allCategory, dress, setDress } = useContext(AppContext);
+  const [dressID,setDressID] = useState("")
 
   const [outfits, setFilteredOutfits] = useState([]);
 
   useEffect(() => {
     const q = collection(db, "outfits");
-    const filter = query(q, where("category", "==", "shoes"));
+    const filter = query(q, where("category", "==", "dress"));
     onSnapshot(filter, (snapshot) => {
       const allData = [];
       snapshot.forEach((item) => {
         allData.push({
           ...item.data(),
-          shoesID: item.id
+          dressID: item.id
         });
       });
 
@@ -47,7 +47,7 @@ export function Shoes(
 
 
               })
-              setShoesID(item.shoesID)}}>
+              setDressID(item.dressID)}}>
                 <View style={styles.imageContainer}>
                   <Image source={{ uri: item.image1 }} style={styles.image} />
                 </View>
@@ -58,7 +58,7 @@ export function Shoes(
               </TouchableOpacity>
             );
           }}
-          keyExtractor={(item) => item.shoesID}
+          keyExtractor={(item) => item.dressID}
           horizontal={false} // Set to true if you want a horizontal scroll
           numColumns={2} // Display two items in a row
         />

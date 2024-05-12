@@ -1,75 +1,94 @@
-import { View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity,Image, TextInput, Dimensions } from "react-native";
+import { View, StyleSheet, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity,Image, TextInput, Dimensions, ScrollView } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from "@expo/vector-icons";
 import { Creepster_400Regular } from '@expo-google-fonts/creepster';
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import * as Font from 'expo-font';
+import { Search } from "./Search";
+import { Profile } from "./Profile";
+import Carousel from 'react-native-reanimated-carousel';
+import { AppContext } from "../Compnents/globalVariable";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../Firebase/settings";
+
+
+const CarouselLinks = [
+  "https://hips.hearstapps.com/hmg-prod/images/paris-fashion-week-fw22-tyler-joe-day-2-0155-1646320324.jpg?crop=1xw:1xh;center,top&resize=980:*",
+  "https://is4.fwrdassets.com/images/p/fw/z/SAMR-WJ2_V4.jpg",
+    "https://is4.fwrdassets.com/images/p/fw/z/TACF-MO164_V6.jpg",
+  ]
 
 
 
 
 
- function Dashboard(){
-  const [appIsReady, setAppIsReady] = useState(false);
 
+ function Dashboard({navigation}){
+   const {userUID, setPreloader, setDocID, setAllJobs, postID,setUserInfo } = useContext(AppContext)
+   const width = Dimensions.get("screen").width;
+   //const [userInfo, setUserInfo] = useState("")
+   
   useEffect(() => {
-    async function prepare() {
-      try {
-        await Font.loadAsync({Creepster_400Regular });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({ });
-        await Font.loadAsync({  });
-
-        
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
+    async function getUserInfo() {
+      onSnapshot(doc(db, "users", userUID), (snapshot) => {
+        if (snapshot.exists()) {
+          setUserInfo(snapshot.data());
+        }
+      });
     }
-    prepare();
-  }, []);
+    getUserInfo();
+  }, [userUID]);
+  //console.log(userInfo);
 
-  useCallback(async () => {
-    if (appIsReady) {
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
+  
   return(
+    <SafeAreaView style={{flex:1, backgroundColor: "black"}}>
+
+    <ScrollView>
     <View style={styles.container} >
-      <TouchableOpacity>
-      <TextInput
-                       placeholder='Search'
-                       style={{borderWidth: 1, padding: 5, borderRadius: 15, fontSize: 20, backgroundColor: 'rgba(255, 255, 255, 0)', width: '100%', alignSelf: 'flex-start',textAlign:"left", borderColor:'gray' }}
-                       placeholderTextColor={"gray"}/>
-     </TouchableOpacity>    
-     <View style={{ flexDirection: 'row', justifyContent: "space-between", marginTop: 10}}>
-     <TouchableOpacity style={ styles.appBTN }>
-      <Text style={{color:'black',fontSize:23, fontFamily:'Creepster_400Regular'}}>WOMEN</Text>
+      <View style={{ alignItems:"flex-end" }}>
+      
+      <TouchableOpacity  onPress={() => navigation.navigate ("Cart")}>
+      <Ionicons name='cart-sharp' size={30} style={{ color:"white"}}/>
       </TouchableOpacity>
-      <TouchableOpacity style={ styles.appBTN }>
-      <Text style={{color:'black', fontSize:23, fontFamily:'Creepster_400Regular'}}>MEN</Text>
+      </View>
+      <Text style={{fontSize: 40, alignSelf: "center", marginTop:10, fontFamily:'Creepster_400Regular',color:"white"}}>Elevate Your Style</Text>
+     
+     
+      <View>
+      <Image style={{width: "100%", height: 700, marginTop: 30}} source={{ uri: "https://hips.hearstapps.com/hmg-prod/images/paris-fashion-week-fw22-tyler-joe-day-2-0155-1646320324.jpg?crop=1xw:1xh;center,top&resize=980:*"}}/>
+      </View>
+        <TouchableOpacity onPress={() => navigation.navigate ("Women")}>
+        <View style={{flexDirection: 'row', justifyContent: "space-between", padding:20}}>
+      <Text style={{fontSize: 40, fontFamily:'Creepster_400Regular',color:"white"}}>Women's Outfits</Text>
+      <Ionicons name='arrow-forward' size={30} style={{ color:"white"}}/>
+      </View>
       </TouchableOpacity>
-      <TouchableOpacity style={ styles.appBTN }>
-      <Text style={{color:'black',fontSize:23, fontFamily:'Creepster_400Regular'}}>SHOES</Text>
+
+      
+      <View>
+      <Image style={{width: "100%", height: 500}} source={{ uri: "https://i.pinimg.com/736x/13/c6/3b/13c63b3ec8bb498be2498513c70f3dcf.jpg"}}/>
+      </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Shoes")}>
+      <View style={{flexDirection: 'row', justifyContent: "space-between", padding:20}}>
+      <Text style={{fontSize: 40, fontFamily:'Creepster_400Regular',color:"white"}}>Shoes</Text>
+      <Ionicons name='arrow-forward' size={30} style={{ color:"white"}}/>
+      </View>
       </TouchableOpacity>
-      <TouchableOpacity style={ styles.appBTN }>
-      <Text style={{color:'black', fontSize:23, fontFamily:'Creepster_400Regular'}}>SEE ALL</Text>
+
+      <View>
+      <Image style={{width: "100%", height: 700}} source={{ uri: "https://i.pinimg.com/736x/d6/59/61/d65961a38fe5907257107fb08197dbef.jpg"}}/>
+      </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Men")}>
+      <View style={{flexDirection: 'row', justifyContent: "space-between", padding:20}}>
+      <Text style={{fontSize: 40, fontFamily:'Creepster_400Regular', color:"white"}}> Men's Outfits</Text>
+      <Ionicons name='arrow-forward' size={30} style={{ color:"white"}}/>
+      </View>
       </TouchableOpacity>
-    </View>            
+
     </View>
+    </ScrollView>
+    </SafeAreaView>
   )
 }
 
@@ -84,35 +103,42 @@ export function Dash(){
           let iconName;
 
           if (route.name === 'Dash') {
+            size = focused ? 35 : 23
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'bars') {
-            iconName = focused ? 'bars' : 'bars-outline';
+          } else if (route.name === 'search') {
+            size = focused ? 35 : 23
+            iconName = focused ? 'search' : 'search-outline';
+          }else if (route.name === 'Profile') {
+            size = focused ? 35 : 23
+            iconName = focused ? 'person' : 'person-outline';
           }
+          
             
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#CC9966',
+        tabBarActiveTintColor: 'black',
+
         tabBarInactiveTintColor: 'gray',
+
+        headerShown: false,
+
       })}>
-        <Tab.Screen name='Dash' component={Dashboard} options={{headerShown:false}}/>
+        <Tab.Screen name='Dash' component={Dashboard}/>
+        <Tab.Screen name='search' component={Search}/>
+        <Tab.Screen name='Profile' component={Profile}/>
+
     </Tab.Navigator>
 )
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 50,
+    padding: 10,
     margin: Platform.OS == "android" ? StatusBar.currentHeight : null,
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     
    
     
-  },
-  appBTN: {
-    borderColor: '#CC9966',
-    borderWidth: 1,
-    backgroundColor: '#CC9966',
-    borderRadius: 15,
-    padding: 10, 
   }
+  
 });

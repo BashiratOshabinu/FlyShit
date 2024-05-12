@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, SafeAreaView, StyleSheet, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, SafeAreaView, StyleSheet, ImageBackground, TextInput, TouchableOpacity, Platform } from 'react-native';
 import { useEffect, useState, useCallback } from "react";
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
@@ -65,7 +65,6 @@ export function LandingPage({ navigation }){
       ignoreSilentSwitch={'obey'}/>
       <Text style={{ fontSize: 35, fontFamily: "Creepster_400Regular", color: "white"}}>FLYSHIT</Text>
       <View style={{ alignItems: 'center',}}>
-      <Text style={{ fontSize: 45, fontFamily: "Caveat_500Medium", }} >Style is more about being yourself.</Text>
         <TouchableOpacity style={ styles.appBTN }  onPress={() => navigation.navigate("Home")} >
         <View style={{flexDirection: 'row',}}>
         <Text style={{ fontSize: 20}}>Shop Now</Text>
